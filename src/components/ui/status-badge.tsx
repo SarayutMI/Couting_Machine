@@ -13,7 +13,7 @@ export function StatusBadge({ status }: { status: Status }) {
   return (
     <div className="flex items-center gap-2">
       <div
-        className={`w-2 h-2 rounded-full shrink-0 ${cfg.pulse ? "pulse-green" : ""}`}
+        className={`w-2 h-2 rounded-full shrink-0 ${cfg.pulse ? "animate-pulse-green" : ""}`}
         style={{ backgroundColor: cfg.color }}
       />
       <span className="font-orbitron text-[10px] tracking-wider" style={{ color: cfg.color }}>

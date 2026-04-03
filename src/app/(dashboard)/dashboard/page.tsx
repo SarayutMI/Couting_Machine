@@ -65,7 +65,7 @@ export default function DashboardPage() {
             {stats.onlineCameras}/{stats.totalCameras}
           </div>
           <div className="flex items-center gap-2 mt-2">
-            <div className="w-2 h-2 rounded-full bg-[#AAFF00] pulse-green" />
+            <div className="w-2 h-2 rounded-full bg-[#AAFF00] animate-pulse-green" />
             <span className="font-orbitron text-xs text-[#AAFF00]">ONLINE</span>
           </div>
         </div>
@@ -111,7 +111,7 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between mb-1">
                   <span className="font-orbitron text-xs text-white">{cam.name}</span>
                   <div className="flex items-center gap-1.5">
-                    <div className={`w-2 h-2 rounded-full ${cam.status === "ONLINE" ? "bg-[#AAFF00] pulse-green" : "bg-[#FF3333]"}`} />
+                    <div className={`w-2 h-2 rounded-full ${cam.status === "ONLINE" ? "bg-[#AAFF00] animate-pulse-green" : "bg-[#FF3333]"}`} />
                     <span className={`font-orbitron text-[10px] ${cam.status === "ONLINE" ? "text-[#AAFF00]" : "text-[#FF3333]"}`}>
                       {cam.status}
                     </span>

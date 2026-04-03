@@ -35,7 +35,7 @@ export default function CountingPage() {
           </Link>
           <span className="font-orbitron text-xs text-white tracking-wider">CAM-01 — Entrance Gate</span>
           <div className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full bg-[#AAFF00] pulse-green" />
+            <div className="w-2 h-2 rounded-full bg-[#AAFF00] animate-pulse-green" />
             <span className="font-orbitron text-[10px] text-[#AAFF00] tracking-wider">COUNTING</span>
           </div>
         </div>
@@ -112,7 +112,7 @@ export default function CountingPage() {
             <div className="font-orbitron text-[10px] text-[#444] tracking-[0.3em] mb-3">SYSTEM STATUS</div>
             <div className="flex items-center gap-3">
               <div
-                className={`w-3 h-3 rounded-full shrink-0 ${current.pulse ? "pulse-green" : ""}`}
+                className={`w-3 h-3 rounded-full shrink-0 ${current.pulse ? "animate-pulse-green" : ""}`}
                 style={{ backgroundColor: current.color }}
               />
               <span className="font-orbitron text-sm" style={{ color: current.color }}>{current.label}</span>

@@ -77,7 +77,7 @@ export function Sidebar({ locale = "en" }: SidebarProps) {
       {/* Status + Logout */}
       <div className="p-2 border-t border-[#AAFF0033]">
         <div className="hidden lg:flex items-center gap-2 px-3 py-2 mb-1">
-          <div className="w-2 h-2 rounded-full bg-[#AAFF00] pulse-green shrink-0" />
+          <div className="w-2 h-2 rounded-full bg-[#AAFF00] animate-pulse-green shrink-0" />
           <span className="font-orbitron text-[10px] text-[#AAFF00] tracking-widest">SYSTEM ONLINE</span>
         </div>
         <button
