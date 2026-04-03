@@ -20,8 +20,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-2 border-[#AAFF00] border-t-transparent rounded-full animate-spin" />
+          <span className="font-orbitron text-xs text-[#AAFF00] tracking-widest">LOADING...</span>
+        </div>
       </div>
     );
   }
@@ -29,14 +32,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   if (!session) return null;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#0A0A0A] scanline">
       <Sidebar locale={locale} />
-      <Topbar
-        locale={locale}
-        onLocaleChange={setLocale}
-        user={session.user}
-      />
-      <main className="ml-16 lg:ml-64 pt-16 p-6">{children}</main>
+      <Topbar locale={locale} onLocaleChange={setLocale} user={session.user} />
+      <main className="ml-16 lg:ml-[220px] pt-14 min-h-screen">{children}</main>
     </div>
   );
 }
