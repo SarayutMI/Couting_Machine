@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Download, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,7 @@ export default function CountsPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState({ cameraId: "", from: "", to: "" });
 
-  async function loadRecords() {
+  const loadRecords = useCallback(async () => {
     setLoading(true);
     const params = new URLSearchParams();
     if (filter.cameraId) params.set("cameraId", filter.cameraId);
@@ -23,10 +23,9 @@ export default function CountsPage() {
     const data = await res.json();
     if (data.success) setRecords(data.data);
     setLoading(false);
-  }
+  }, [filter]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { loadRecords(); }, []);
+  useEffect(() => { loadRecords(); }, [loadRecords]);
 
   function exportCsv() {
     const header = "id,cameraId,count,timestamp\n";

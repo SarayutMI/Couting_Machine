@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Plus, RefreshCw, Trash2, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,16 +16,15 @@ export default function CamerasPage() {
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({ name: "", ip: "", port: "80", username: "", password: "", protocol: "ONVIF" });
 
-  async function loadCameras() {
+  const loadCameras = useCallback(async () => {
     setLoading(true);
     const res = await fetch("/api/cameras");
     const data = await res.json();
     if (data.success) setCameras(data.data);
     setLoading(false);
-  }
+  }, []);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { loadCameras(); }, []);
+  useEffect(() => { loadCameras(); }, [loadCameras]);
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
