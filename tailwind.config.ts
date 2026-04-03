@@ -10,15 +10,21 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-space-grotesk)", "Inter", "sans-serif"],
-        mono: ["var(--font-jetbrains-mono)", "JetBrains Mono", "monospace"],
+        orbitron: ["var(--font-orbitron)", "monospace"],
+        "ibm-thai": ["var(--font-ibm-thai)", "sans-serif"],
+        sans: ["var(--font-orbitron)", "monospace"],
+        mono: ["var(--font-orbitron)", "monospace"],
       },
       colors: {
-        cyan: {
-          400: "#22d3ee",
-          500: "#06b6d4",
-          glow: "#00D4FF",
-        },
+        accent: "#AAFF00",
+        "accent-dim": "#88CC00",
+        "bg-primary": "#0A0A0A",
+        "bg-surface": "#111111",
+        "bg-surface-2": "#1A1A1A",
+        "status-online": "#AAFF00",
+        "status-offline": "#FF3333",
+        "status-scanning": "#00AAFF",
+        "status-paused": "#FFAA00",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
@@ -40,10 +46,6 @@ const config: Config = {
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
-        },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
@@ -67,27 +69,22 @@ const config: Config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-        "count-up": {
-          from: { opacity: "0", transform: "translateY(10px)" },
-          to: { opacity: "1", transform: "translateY(0)" },
+        "pulse-green": {
+          "0%, 100%": { boxShadow: "0 0 0 0 rgba(170,255,0,0.4)" },
+          "50%": { boxShadow: "0 0 0 8px rgba(170,255,0,0)" },
         },
-        pulse: {
-          "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.5" },
-        },
-        glow: {
-          "0%, 100%": { boxShadow: "0 0 5px #00D4FF, 0 0 10px #00D4FF" },
-          "50%": { boxShadow: "0 0 15px #00D4FF, 0 0 30px #00D4FF" },
+        blob: {
+          "0%, 100%": { borderRadius: "60% 40% 30% 70% / 60% 30% 70% 40%" },
+          "25%": { borderRadius: "30% 60% 70% 40% / 50% 60% 30% 60%" },
+          "50%": { borderRadius: "50% 60% 30% 60% / 30% 60% 70% 40%" },
+          "75%": { borderRadius: "60% 40% 60% 30% / 70% 30% 50% 60%" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "count-up": "count-up 0.5s ease-out",
-        "glow": "glow 2s ease-in-out infinite",
-      },
-      backdropBlur: {
-        xs: "2px",
+        "pulse-green": "pulse-green 2s infinite",
+        blob: "blob 8s ease-in-out infinite",
       },
     },
   },
