@@ -35,6 +35,9 @@ export default function LoginPage() {
 
   return (
     <div className="glass-card rounded-2xl p-8">
+      <div className="mb-4 rounded-lg border border-cyan-400 bg-cyan-400/10 px-4 py-3 text-sm text-cyan-300">
+        🎮 <strong>Demo Mode:</strong> Email: <code>demo@camcount.com</code> | Password: <code>demo1234</code>
+      </div>
       <div className="flex flex-col items-center mb-8">
         <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 text-primary mb-4">
           <Cpu size={28} />

@@ -10,19 +10,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: "Missing required fields" }, { status: 400 });
   }
 
-  const existing = await prisma.user.findFirst({
-    where: { OR: [{ email }, { username }] },
-  });
+  try {
+    const existing = await prisma.user.findFirst({
+      where: { OR: [{ email }, { username }] },
+    });
 
-  if (existing) {
-    return NextResponse.json({ success: false, error: "Email or username already taken" }, { status: 409 });
+    if (existing) {
+      return NextResponse.json({ success: false, error: "Email or username already taken" }, { status: 409 });
+    }
+
+    const hashed = await bcrypt.hash(password, 12);
+    const user = await prisma.user.create({
+      data: { email, username, password: hashed },
+      select: { id: true, email: true, username: true, role: true },
+    });
+
+    return NextResponse.json({ success: true, data: user }, { status: 201 });
+  } catch {
+    return NextResponse.json({ success: false, error: "Server error — database not connected." }, { status: 503 });
   }
-
-  const hashed = await bcrypt.hash(password, 12);
-  const user = await prisma.user.create({
-    data: { email, username, password: hashed },
-    select: { id: true, email: true, username: true, role: true },
-  });
-
-  return NextResponse.json({ success: true, data: user }, { status: 201 });
 }

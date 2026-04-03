@@ -22,7 +22,9 @@ export default function RegisterPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
     });
-    const data = await res.json();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let data: any = { success: false, error: "Server error — database not connected." };
+    try { data = await res.json(); } catch {}
     setLoading(false);
 
     if (!data.success) {
@@ -35,6 +37,9 @@ export default function RegisterPage() {
 
   return (
     <div className="glass-card rounded-2xl p-8">
+      <div className="mb-4 rounded-lg border border-cyan-400 bg-cyan-400/10 px-4 py-3 text-sm text-cyan-300">
+        🎮 <strong>Demo Mode:</strong> Email: <code>demo@camcount.com</code> | Password: <code>demo1234</code>
+      </div>
       <h1 className="text-2xl font-bold mb-6 text-center">Create Account</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
