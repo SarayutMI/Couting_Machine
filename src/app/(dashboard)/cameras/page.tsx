@@ -158,16 +158,18 @@ export default function CamerasPage() {
                 <span className="font-orbitron text-[10px] text-[#444]">PROTOCOL: <span className="text-white">{cam.protocol}</span></span>
               </div>
               <div className="flex gap-2">
-                <button className="font-orbitron text-[10px] tracking-wider border border-[#AAFF0055] text-[#AAFF00] px-3 py-1.5 rounded hover:bg-[#AAFF0010] transition-all">
+                <button type="button" aria-label={`Start counting on ${cam.name}`} className="font-orbitron text-[10px] tracking-wider border border-[#AAFF0055] text-[#AAFF00] px-3 py-1.5 rounded hover:bg-[#AAFF0010] transition-all">
                   ▶ START COUNTING
                 </button>
-                <button className="font-orbitron text-[10px] tracking-wider border border-[#222] text-[#444] px-3 py-1.5 rounded hover:border-[#AAFF00] hover:text-[#AAFF00] transition-all">
+                <button type="button" aria-label={`Snapshot from ${cam.name}`} className="font-orbitron text-[10px] tracking-wider border border-[#222] text-[#444] px-3 py-1.5 rounded hover:border-[#AAFF00] hover:text-[#AAFF00] transition-all">
                   📸 SNAPSHOT
                 </button>
-                <button className="font-orbitron text-[10px] tracking-wider border border-[#222] text-[#444] px-3 py-1.5 rounded hover:border-[#AAFF00] hover:text-[#AAFF00] transition-all">
+                <button type="button" aria-label={`Edit ${cam.name}`} className="font-orbitron text-[10px] tracking-wider border border-[#222] text-[#444] px-3 py-1.5 rounded hover:border-[#AAFF00] hover:text-[#AAFF00] transition-all">
                   ✏ EDIT
                 </button>
                 <button
+                  type="button"
+                  aria-label={`Delete ${cam.name}`}
                   onClick={() => handleDelete(cam.id)}
                   className="font-orbitron text-[10px] tracking-wider border border-[#FF333333] text-[#FF3333] px-3 py-1.5 rounded hover:bg-[#FF333310] transition-all ml-auto"
                 >

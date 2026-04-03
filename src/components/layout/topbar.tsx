@@ -38,6 +38,7 @@ export function Topbar({ locale, onLocaleChange, user }: TopbarProps) {
         {/* Theme toggle */}
         <button
           onClick={() => setTheme(isDark ? "light" : "dark")}
+          aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
           className="w-8 h-8 border border-[#222] rounded flex items-center justify-center text-[#444] hover:border-[#AAFF00] hover:text-[#AAFF00] transition-all font-orbitron text-xs"
         >
           {isDark ? "🌙" : "☀️"}
