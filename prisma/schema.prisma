@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  VIEWER
+}
+
+enum CameraProtocol {
+  ONVIF
+  RTSP
+  WEBCAM
+}
+
+enum CameraStatus {
+  ONLINE
+  OFFLINE
+  ERROR
+}
+
+model User {
+  id          String               @id @default(cuid())
+  email       String               @unique
+  username    String               @unique
+  password    String
+  role        Role                 @default(VIEWER)
+  avatar      String?
+  cameras     Camera[]
+  resetTokens PasswordResetToken[]
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+}
+
+model Camera {
+  id          String         @id @default(cuid())
+  name        String
+  ip          String
+  port        Int            @default(80)
+  username    String
+  password    String
+  protocol    CameraProtocol @default(ONVIF)
+  streamUrl   String?
+  snapshotUrl String?
+  status      CameraStatus   @default(OFFLINE)
+  owner       User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId     String
+  counts      CountRecord[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model CountRecord {
+  id        String   @id @default(cuid())
+  camera    Camera   @relation(fields: [cameraId], references: [id], onDelete: Cascade)
+  cameraId  String
+  count     Int
+  timestamp DateTime @default(now())
+  metadata  Json     @default("{}")
+  createdAt DateTime @default(now())
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  expires   DateTime
+  createdAt DateTime @default(now())
+}
