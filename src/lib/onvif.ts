@@ -21,7 +21,7 @@ export interface StreamInfo {
 
 export async function discoverCameras(timeoutMs = 5000): Promise<OnvifCamera[]> {
   return new Promise((resolve) => {
-    setTimeout(() => resolve([]), timeoutMs > 1000 ? 1000 : timeoutMs);
+    setTimeout(() => resolve([]), Math.min(timeoutMs, 1000));
   });
 }
 
