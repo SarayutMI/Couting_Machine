@@ -36,14 +36,14 @@ export default function CountingPage() {
     try {
       // Must request permission first to get device labels
       const tempStream = await navigator.mediaDevices.getUserMedia({ video: true });
-      tempStream.getTracks().forEach(t => t.stop());
+      tempStream.getTracks().forEach(track => track.stop());
 
       const allDevices = await navigator.mediaDevices.enumerateDevices();
       const videoDevices = allDevices
-        .filter(d => d.kind === "videoinput")
-        .map(d => ({
-          deviceId: d.deviceId,
-          label: d.label || `Camera ${d.deviceId.slice(0, 8)}`,
+        .filter(device => device.kind === "videoinput")
+        .map(device => ({
+          deviceId: device.deviceId,
+          label: device.label || `Camera ${device.deviceId.slice(0, 8)}`,
         }));
 
       setDevices(videoDevices);
@@ -64,7 +64,7 @@ export default function CountingPage() {
     try {
       // Stop existing stream
       if (streamRef.current) {
-        streamRef.current.getTracks().forEach(t => t.stop());
+        streamRef.current.getTracks().forEach(track => track.stop());
       }
 
       const constraints: MediaStreamConstraints = {
@@ -84,7 +84,7 @@ export default function CountingPage() {
           setStatus("counting");
           // Start session timer
           timerRef.current = setInterval(() => {
-            setSessionTime(t => t + 1);
+            setSessionTime(prev => prev + 1);
           }, 1000);
         };
       }
@@ -107,7 +107,7 @@ export default function CountingPage() {
   // Stop camera
   const stopCamera = useCallback(() => {
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach(t => t.stop());
+      streamRef.current.getTracks().forEach(track => track.stop());
       streamRef.current = null;
     }
     if (videoRef.current) {
@@ -115,8 +115,31 @@ export default function CountingPage() {
     }
     if (timerRef.current) {
       clearInterval(timerRef.current);
+      timerRef.current = null;
     }
     setStatus("stopped");
+  }, []);
+
+  // Toggle pause/resume — pauses the video element and session timer
+  const togglePause = useCallback(() => {
+    setStatus(prev => {
+      if (prev === "paused") {
+        // Resume video and timer
+        videoRef.current?.play();
+        timerRef.current = setInterval(() => {
+          setSessionTime(prevTime => prevTime + 1);
+        }, 1000);
+        return "counting";
+      } else {
+        // Pause video and timer
+        videoRef.current?.pause();
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+        }
+        return "paused";
+      }
+    });
   }, []);
 
   // Cleanup on unmount
@@ -135,11 +158,11 @@ export default function CountingPage() {
   }, [loadDevices]);
 
   // Format session time
-  const formatTime = (seconds: number) => {
-    const h = Math.floor(seconds / 3600).toString().padStart(2, "0");
-    const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, "0");
-    const s = (seconds % 60).toString().padStart(2, "0");
-    return `${h}:${m}:${s}`;
+  const formatTime = (totalSeconds: number) => {
+    const hours = Math.floor(totalSeconds / 3600).toString().padStart(2, "0");
+    const minutes = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, "0");
+    const secs = (totalSeconds % 60).toString().padStart(2, "0");
+    return `${hours}:${minutes}:${secs}`;
   };
 
   const statusConfig: Record<CountStatus, { color: string; label: string; labelTh: string }> = {
@@ -185,9 +208,9 @@ export default function CountingPage() {
             }}
             className="bg-[#111] border border-[#222] text-[#AAFF00] font-orbitron text-[9px] rounded-lg px-2 py-1 max-w-[140px] truncate"
           >
-            {devices.map(d => (
-              <option key={d.deviceId} value={d.deviceId}>
-                {d.label.length > 20 ? d.label.slice(0, 20) + "…" : d.label}
+            {devices.map(device => (
+              <option key={device.deviceId} value={device.deviceId}>
+                {device.label.length > 20 ? device.label.slice(0, 20) + "…" : device.label}
               </option>
             ))}
           </select>
@@ -210,7 +233,7 @@ export default function CountingPage() {
           ) : (
             <>
               <button
-                onClick={() => setStatus(status === "paused" ? "counting" : "paused")}
+                onClick={togglePause}
                 className="font-orbitron text-[10px] border border-[#FFAA0055] text-[#FFAA00] px-2 py-1.5 rounded-lg hover:bg-[#FFAA0010] transition-all"
               >
                 {status === "paused" ? "▶" : "⏸"}
@@ -309,7 +332,7 @@ export default function CountingPage() {
           <div className="absolute bottom-0 left-0 right-0 bg-black/80 backdrop-blur-xl border-t border-[#AAFF0022] px-3 py-1.5 flex gap-4 overflow-x-auto">
             {devices.length > 0 ? (
               <span className="font-orbitron text-[10px] text-[#AAFF00] shrink-0">
-                {devices.find(d => d.deviceId === selectedDevice)?.label?.slice(0, 30) || "CAMERA"}
+                {devices.find(device => device.deviceId === selectedDevice)?.label?.slice(0, 30) || "CAMERA"}
               </span>
             ) : (
               <span className="font-orbitron text-[10px] text-[#333]">NO DEVICE</span>
