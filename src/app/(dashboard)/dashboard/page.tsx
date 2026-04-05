@@ -38,55 +38,55 @@ export default function DashboardPage() {
   const maxCount = Math.max(...counts.map((c) => c.count));
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-3 sm:p-4 space-y-3 overflow-y-auto h-full">
       {/* Header */}
       <div>
         <div className="font-orbitron text-[10px] text-[#444] tracking-[0.3em] mb-1">◆ SYSTEM OVERVIEW</div>
-        <h1 className="font-orbitron text-2xl font-black text-white tracking-wider">DASHBOARD</h1>
+        <h1 className="font-orbitron text-xl sm:text-2xl font-black text-white tracking-wider">DASHBOARD</h1>
       </div>
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {/* Total Count */}
-        <div className="bg-[#111] border border-[#AAFF0033] rounded-lg p-6 relative overflow-hidden hover:shadow-[0_0_20px_rgba(170,255,0,0.1)] transition-all">
+        <div className="bg-[#111] border border-[#AAFF0033] rounded-2xl p-3 sm:p-4 relative overflow-hidden hover:shadow-[0_0_20px_rgba(170,255,0,0.1)] transition-all">
           <div className="absolute top-0 left-0 w-1 h-full bg-[#AAFF00]" />
-          <div className="font-orbitron text-[10px] text-[#444] tracking-[0.25em] mb-3">TOTAL COUNT</div>
-          <div className="font-orbitron text-4xl font-black text-[#AAFF00] glow-green-text">
+          <div className="font-orbitron text-[10px] text-[#444] tracking-[0.25em] mb-2">TOTAL COUNT</div>
+          <div className="font-orbitron text-3xl sm:text-4xl font-black text-[#AAFF00] glow-green-text">
             {stats.totalCountToday.toLocaleString()}
           </div>
-          <div className="font-orbitron text-xs text-[#444] mt-2">↑ +58/MIN</div>
+          <div className="font-orbitron text-xs text-[#444] mt-1">↑ +58/MIN</div>
         </div>
 
         {/* Active Cams */}
-        <div className="bg-[#111] border border-[#AAFF0033] rounded-lg p-6 relative overflow-hidden hover:shadow-[0_0_20px_rgba(170,255,0,0.1)] transition-all">
+        <div className="bg-[#111] border border-[#AAFF0033] rounded-2xl p-3 sm:p-4 relative overflow-hidden hover:shadow-[0_0_20px_rgba(170,255,0,0.1)] transition-all">
           <div className="absolute top-0 left-0 w-1 h-full bg-[#AAFF00]" />
-          <div className="font-orbitron text-[10px] text-[#444] tracking-[0.25em] mb-3">ACTIVE CAMERAS</div>
-          <div className="font-orbitron text-4xl font-black text-[#AAFF00] glow-green-text">
+          <div className="font-orbitron text-[10px] text-[#444] tracking-[0.25em] mb-2">ACTIVE CAMS</div>
+          <div className="font-orbitron text-3xl sm:text-4xl font-black text-[#AAFF00] glow-green-text">
             {stats.onlineCameras}/{stats.totalCameras}
           </div>
-          <div className="flex items-center gap-2 mt-2">
+          <div className="flex items-center gap-2 mt-1">
             <div className="w-2 h-2 rounded-full bg-[#AAFF00] animate-pulse-green" />
             <span className="font-orbitron text-xs text-[#AAFF00]">ONLINE</span>
           </div>
         </div>
 
         {/* Today Scanned */}
-        <div className="bg-[#111] border border-[#AAFF0033] rounded-lg p-6 relative overflow-hidden hover:shadow-[0_0_20px_rgba(170,255,0,0.1)] transition-all">
+        <div className="col-span-2 sm:col-span-1 bg-[#111] border border-[#AAFF0033] rounded-2xl p-3 sm:p-4 relative overflow-hidden hover:shadow-[0_0_20px_rgba(170,255,0,0.1)] transition-all">
           <div className="absolute top-0 left-0 w-1 h-full bg-[#AAFF00]" />
-          <div className="font-orbitron text-[10px] text-[#444] tracking-[0.25em] mb-3">THIS HOUR</div>
-          <div className="font-orbitron text-4xl font-black text-[#AAFF00] glow-green-text">
+          <div className="font-orbitron text-[10px] text-[#444] tracking-[0.25em] mb-2">THIS HOUR</div>
+          <div className="font-orbitron text-3xl sm:text-4xl font-black text-[#AAFF00] glow-green-text">
             {stats.totalCountThisHour.toLocaleString()}
           </div>
-          <div className="font-orbitron text-xs text-[#444] mt-2">↑ +12%</div>
+          <div className="font-orbitron text-xs text-[#444] mt-1">↑ +12%</div>
         </div>
       </div>
 
       {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
         {/* Chart */}
-        <div className="lg:col-span-2 bg-[#111] border border-[#AAFF0033] rounded-lg p-6">
-          <div className="font-orbitron text-[10px] text-[#444] tracking-[0.25em] mb-4">COUNT TREND — LAST 24H</div>
-          <div className="flex items-end gap-2 h-40">
+        <div className="lg:col-span-2 bg-[#111] border border-[#AAFF0033] rounded-2xl p-3 sm:p-4">
+          <div className="font-orbitron text-[10px] text-[#444] tracking-[0.25em] mb-3">COUNT TREND — LAST 24H</div>
+          <div className="flex items-end gap-2 h-32 sm:h-40">
             {counts.map(({ time, count }) => {
               const heightPct = maxCount > 0 ? (count / maxCount) * 100 : 0;
               return (
@@ -103,11 +103,11 @@ export default function DashboardPage() {
         </div>
 
         {/* Camera Status */}
-        <div className="bg-[#111] border border-[#AAFF0033] rounded-lg p-6">
-          <div className="font-orbitron text-[10px] text-[#444] tracking-[0.25em] mb-4">CAMERA STATUS</div>
-          <div className="space-y-4">
+        <div className="bg-[#111] border border-[#AAFF0033] rounded-2xl p-3 sm:p-4">
+          <div className="font-orbitron text-[10px] text-[#444] tracking-[0.25em] mb-3">CAMERA STATUS</div>
+          <div className="space-y-3">
             {MOCK_CAMERAS.map((cam) => (
-              <div key={cam.id} className="border-b border-[#1A1A1A] pb-3 last:border-0 last:pb-0">
+              <div key={cam.id} className="border-b border-[#1A1A1A] pb-2 last:border-0 last:pb-0">
                 <div className="flex items-center justify-between mb-1">
                   <span className="font-orbitron text-xs text-white">{cam.name}</span>
                   <div className="flex items-center gap-1.5">

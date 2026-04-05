@@ -79,8 +79,39 @@
 
 /* Glass card (legacy support) */
 .glass-card {
+  background: rgba(17, 17, 17, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(170, 255, 0, 0.15);
+  border-radius: 1.25rem;
+}
+
+/* Compact card style */
+.card-compact {
   background: #111111;
-  border: 1px solid rgba(170,255,0,0.2);
+  border: 1px solid rgba(170, 255, 0, 0.1);
+  border-radius: 1rem;
+}
+
+/* Safe area insets for iPhone notch */
+.safe-top { padding-top: env(safe-area-inset-top); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+.safe-left { padding-left: env(safe-area-inset-left); }
+.safe-right { padding-right: env(safe-area-inset-right); }
+
+/* Landscape/Portrait responsive for counting page */
+@media (orientation: landscape) and (max-height: 600px) {
+  .landscape\:flex-row { flex-direction: row !important; }
+  .landscape\:flex-col { flex-direction: column !important; }
+  .landscape\:w-\[70\%\] { width: 70% !important; }
+  .landscape\:w-\[30\%\] { width: 30% !important; }
+  .landscape\:h-full { height: 100% !important; }
+  .landscape\:border-r { border-right-width: 1px !important; }
+  .landscape\:border-b-0 { border-bottom-width: 0 !important; }
+  .landscape\:border-r-0 { border-right-width: 0 !important; }
+  .landscape\:block { display: block !important; }
+  .landscape\:flex-none { flex: none !important; }
+  .landscape\:text-5xl { font-size: 3rem !important; }
 }
 
 /* Scan line animation */
