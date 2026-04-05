@@ -265,8 +265,14 @@ export default function CountingPage() {
       streamRef.current = null;
     }
     if (videoRef.current) videoRef.current.srcObject = null;
-    if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
-    if (detectIntervalRef.current) { clearInterval(detectIntervalRef.current); detectIntervalRef.current = null; }
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    if (detectIntervalRef.current) {
+      clearInterval(detectIntervalRef.current);
+      detectIntervalRef.current = null;
+    }
 
     // Clear overlay
     const overlay = overlayCanvasRef.current;
@@ -286,8 +292,14 @@ export default function CountingPage() {
         return "counting";
       } else {
         videoRef.current?.pause();
-        if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
-        if (detectIntervalRef.current) { clearInterval(detectIntervalRef.current); detectIntervalRef.current = null; }
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+        }
+        if (detectIntervalRef.current) {
+          clearInterval(detectIntervalRef.current);
+          detectIntervalRef.current = null;
+        }
         return "paused";
       }
     });
@@ -304,7 +316,11 @@ export default function CountingPage() {
   }, [devices.length, loadDevices, selectedDevice, startCamera]);
 
   // ── Cleanup ──
-  useEffect(() => () => { stopCamera(); }, [stopCamera]);
+  useEffect(() => {
+    return () => {
+      stopCamera();
+    };
+  }, [stopCamera]);
   useEffect(() => {
     navigator.mediaDevices?.addEventListener("devicechange", loadDevices);
     return () => navigator.mediaDevices?.removeEventListener("devicechange", loadDevices);

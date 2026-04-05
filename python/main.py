@@ -5,7 +5,8 @@ Run: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
 import io
 import time
-from typing import List, Optional
+from contextlib import asynccontextmanager
+from typing import AsyncGenerator, List, Optional
 
 import cv2
 import numpy as np
@@ -43,7 +44,26 @@ COCO_CLASS_NAMES = [
 # ──────────────────────────────────────────────────────────────
 # App setup
 # ──────────────────────────────────────────────────────────────
-app = FastAPI(title="YOLO Detection API", version="1.0.0")
+
+# Load model once at startup
+model: Optional[YOLO] = None
+model_load_error: Optional[str] = None
+startup_time = time.time()
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+    global model, model_load_error
+    try:
+        model = YOLO(MODEL_NAME)
+        print(f"[YOLO] Model '{MODEL_NAME}' loaded successfully.")
+    except Exception as exc:
+        model_load_error = str(exc)
+        print(f"[YOLO] Failed to load model: {exc}")
+    yield
+
+
+app = FastAPI(title="YOLO Detection API", version="1.0.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -52,22 +72,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Load model once at startup
-model: Optional[YOLO] = None
-model_load_error: Optional[str] = None
-startup_time = time.time()
-
-
-@app.on_event("startup")
-async def load_model() -> None:
-    global model, model_load_error
-    try:
-        model = YOLO(MODEL_NAME)
-        print(f"[YOLO] Model '{MODEL_NAME}' loaded successfully.")
-    except Exception as exc:
-        model_load_error = str(exc)
-        print(f"[YOLO] Failed to load model: {exc}")
 
 
 # ──────────────────────────────────────────────────────────────
