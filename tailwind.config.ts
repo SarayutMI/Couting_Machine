@@ -88,7 +88,14 @@ const config: Config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    // Custom landscape/portrait variants
+    function({ addVariant }: { addVariant: (name: string, definition: string) => void }) {
+      addVariant("landscape", "@media (orientation: landscape)");
+      addVariant("portrait", "@media (orientation: portrait)");
+    },
+  ],
 };
 
 export default config;
