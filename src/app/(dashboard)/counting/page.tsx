@@ -130,6 +130,13 @@ export default function CountingPage() {
   const [log, setLog] = useState<LogEntry[]>([]);
   const [inferenceMs, setInferenceMs] = useState<number | null>(null);
 
+  // ── Target & Adjust state ──
+  const [target, setTarget] = useState(10);
+  const [addQty, setAddQty] = useState(1);
+  const [removeQty, setRemoveQty] = useState(1);
+  const [totalAdded, setTotalAdded] = useState(0);
+  const [totalRemoved, setTotalRemoved] = useState(0);
+
   // ── API health check (runs on mount, re-checks every 10 s) ──
   useEffect(() => {
     let cancelled = false;
@@ -350,6 +357,7 @@ export default function CountingPage() {
   const current = statusConfig[status];
   const isActive = status === "counting" || status === "paused";
   const isIdle = status === "idle" || status === "stopped" || status === "error";
+  const targetReached = target > 0 && currentFrameCount >= target;
 
   return (
     <div className="flex flex-col h-full">
@@ -555,79 +563,224 @@ export default function CountingPage() {
         </div>
 
         {/* RIGHT PANEL */}
-        <div className="landscape:w-[30%] h-[40%] landscape:h-full flex flex-col landscape:flex-col flex-row overflow-hidden bg-[#0A0A0A]">
+        <div className="landscape:w-[30%] h-[40%] landscape:h-full flex flex-col overflow-y-auto bg-[#0A0A0A] gap-3 p-3">
 
-          {/* COUNT DISPLAY */}
-          <div className="flex-1 landscape:flex-none flex flex-col items-center justify-center p-3 border-b landscape:border-b border-r landscape:border-r-0 border-[#AAFF0022] gap-2">
-            {/* Current frame count */}
-            <div className="text-center">
-              <div className="font-orbitron text-[9px] text-[#444] tracking-[0.3em] mb-0.5">CURRENT FRAME</div>
-              <div
-                className="font-orbitron font-black text-white leading-none text-3xl landscape:text-4xl"
-                style={{ textShadow: currentFrameCount > 0 ? "0 0 15px #AAFF00" : "none" }}
-              >
-                {currentFrameCount}
-              </div>
-              <div className="font-ibm-thai text-[9px] text-[#333] mt-0.5">คนในภาพปัจจุบัน</div>
+          {/* PERSON COUNT CARD */}
+          <div
+            className="bg-[#111] rounded-2xl p-3 flex flex-col items-center justify-center gap-1 transition-colors duration-300 border"
+            style={{ borderColor: targetReached ? "#FF333344" : "#AAFF0015" }}
+          >
+            <div className="font-orbitron text-[9px] tracking-widest text-[#444]">PERSON COUNT</div>
+            <div
+              className={`font-orbitron font-black leading-none text-7xl md:text-8xl transition-colors duration-300 ${targetReached ? "animate-pulse" : ""}`}
+              style={{
+                color: targetReached ? "#FF3333" : "#AAFF00",
+                textShadow: targetReached ? "0 0 20px #FF3333, 0 0 40px #FF333366" : "0 0 20px #AAFF00, 0 0 40px #AAFF0066",
+              }}
+            >
+              {currentFrameCount}
             </div>
-            {/* Session total */}
-            <div className="text-center">
-              <div className="font-orbitron text-[9px] text-[#444] tracking-[0.3em] mb-0.5">SESSION TOTAL</div>
-              <div
-                className="font-orbitron font-black text-[#AAFF00] leading-none text-4xl landscape:text-5xl"
-                style={{ textShadow: "0 0 20px #AAFF00" }}
-              >
-                {totalCount.toLocaleString()}
-              </div>
-              <div className="font-ibm-thai text-[10px] text-[#333] mt-0.5">รวมทั้ง Session</div>
-            </div>
+            {targetReached && (
+              <div className="font-orbitron text-[9px] text-[#FF3333] animate-pulse">⚠ TARGET REACHED</div>
+            )}
+            <div className="font-ibm-thai text-[9px] text-[#333]">คนในภาพปัจจุบัน</div>
           </div>
 
-          {/* STATUS + SESSION + LOG */}
-          <div className="flex-1 landscape:flex-none flex flex-col p-3 gap-2 overflow-y-auto">
-            {/* Status */}
-            <div className="bg-[#111] border border-[#AAFF0015] rounded-xl p-3">
-              <div className="font-orbitron text-[9px] text-[#333] tracking-widest mb-2">STATUS</div>
-              <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: current.color, boxShadow: status === "counting" ? `0 0 8px ${current.color}` : "none" }} />
-                <span className="font-orbitron text-xs" style={{ color: current.color }}>{current.label}</span>
-              </div>
-              <div className="font-ibm-thai text-[10px] text-[#444] mt-1">{current.labelTh}</div>
+          {/* TARGET CARD */}
+          <div
+            className="bg-[#111] rounded-2xl p-3 transition-colors duration-300 border"
+            style={{ borderColor: targetReached ? "#FF333344" : "#AAFF0015" }}
+          >
+            <div className="font-orbitron text-[9px] tracking-widest text-[#444] mb-3">🎯 TARGET</div>
+
+            {/* Quick adjust ± */}
+            <div className="flex items-center gap-2 justify-center mb-2">
+              <button
+                onClick={() => setTarget(t => Math.max(1, t - 1))}
+                className="font-orbitron text-sm border border-[#AAFF0044] text-[#AAFF00] w-8 h-8 rounded-lg hover:bg-[#AAFF0015] transition-all flex items-center justify-center"
+              >
+                −
+              </button>
+              <input
+                type="number"
+                value={target}
+                min={1}
+                onChange={e => setTarget(Math.max(1, parseInt(e.target.value) || 1))}
+                className="font-orbitron text-center text-[#AAFF00] bg-[#0A0A0A] border border-[#AAFF0033] rounded-lg w-16 py-1 text-sm focus:border-[#AAFF00] focus:outline-none"
+              />
+              <button
+                onClick={() => setTarget(t => t + 1)}
+                className="font-orbitron text-sm border border-[#AAFF0044] text-[#AAFF00] w-8 h-8 rounded-lg hover:bg-[#AAFF0015] transition-all flex items-center justify-center"
+              >
+                +
+              </button>
             </div>
 
-            {/* Session */}
-            <div className="bg-[#111] border border-[#AAFF0015] rounded-xl p-3">
-              <div className="font-orbitron text-[9px] text-[#333] tracking-widest mb-2">SESSION</div>
-              <div className="grid grid-cols-2 gap-1">
-                <span className="font-orbitron text-[9px] text-[#333]">TIME</span>
-                <span className="font-orbitron text-[9px] text-[#AAFF00] text-right">{formatTime(sessionTime)}</span>
-                <span className="font-orbitron text-[9px] text-[#333]">TOTAL</span>
-                <span className="font-orbitron text-[9px] text-white text-right">{totalCount.toLocaleString()}</span>
-                <span className="font-orbitron text-[9px] text-[#333]">MODE</span>
-                <span className="font-orbitron text-[9px] text-right" style={{ color: demoMode ? "#FFAA00" : "#AAFF00" }}>
-                  {demoMode ? "DEMO" : "LIVE"}
-                </span>
-              </div>
+            {/* Quick preset chips */}
+            <div className="flex gap-1 justify-center mb-3 flex-wrap">
+              {[5, 10, 20, 50, 100].map(n => (
+                <button
+                  key={n}
+                  onClick={() => setTarget(n)}
+                  className={`font-orbitron text-[9px] px-2 py-0.5 rounded-full border transition-all ${
+                    target === n
+                      ? "border-[#AAFF00] text-[#AAFF00] bg-[#AAFF0015]"
+                      : "border-[#333] text-[#444] hover:border-[#AAFF0044] hover:text-[#AAFF0088]"
+                  }`}
+                >
+                  {n}
+                </button>
+              ))}
             </div>
 
-            {/* Detection log */}
-            <div className="bg-[#111] border border-[#AAFF0015] rounded-xl p-3 hidden landscape:flex flex-col flex-1 min-h-0">
-              <div className="font-orbitron text-[9px] text-[#333] tracking-widest mb-2">DETECTION LOG</div>
-              <div className="space-y-1 overflow-y-auto flex-1">
-                {log.length === 0 ? (
-                  <div className="font-orbitron text-[9px] text-[#222]">— no detections yet —</div>
-                ) : (
-                  log.slice(0, 10).map((entry, i) => (
-                    <div key={`${entry.time}-${i}`} className={`flex justify-between font-orbitron text-[9px] ${i === 0 ? "text-[#AAFF00]" : "text-[#333]"}`}>
-                      <span>{entry.time}</span>
-                      <span>+{entry.frameCount}</span>
-                      <span className={i === 0 ? "text-white" : ""}>{entry.total.toLocaleString()}</span>
-                    </div>
-                  ))
+            {/* Progress */}
+            {target > 0 ? (
+              <>
+                <div className="font-orbitron text-[9px] text-[#333] tracking-widest mb-1">── PROGRESS ──</div>
+                <div className="w-full h-2 rounded-full mb-1" style={{ backgroundColor: "#1A1A1A" }}>
+                  <div
+                    className="h-2 rounded-full transition-all duration-300"
+                    style={{
+                      width: `${Math.min(100, (currentFrameCount / target) * 100)}%`,
+                      backgroundColor: targetReached ? "#FF3333" : "#AAFF00",
+                    }}
+                  />
+                </div>
+                <div className="flex justify-between font-orbitron text-[9px]">
+                  <span className="text-[#555]">{currentFrameCount} / {target}</span>
+                  <span style={{ color: targetReached ? "#FF3333" : "#AAFF00" }}>
+                    {Math.round((currentFrameCount / target) * 100)}%
+                  </span>
+                </div>
+                {targetReached && (
+                  <div className="mt-2 text-center font-orbitron text-[10px] text-[#FF3333] animate-pulse">
+                    ● TARGET REACHED
+                  </div>
                 )}
+              </>
+            ) : (
+              <div className="text-center font-orbitron text-[9px] text-[#333]">SET TARGET TO ENABLE</div>
+            )}
+          </div>
+
+          {/* ADJUST CARD */}
+          <div className="bg-[#111] border border-[#AAFF0015] rounded-2xl p-3">
+            <div className="font-orbitron text-[9px] tracking-widest text-[#444] mb-2">ADJUST</div>
+
+            {/* Quick qty selector */}
+            <div className="flex items-center gap-1 mb-2">
+              <span className="font-orbitron text-[9px] text-[#333] mr-1">QTY</span>
+              {[1, 2, 5].map(n => (
+                <button
+                  key={n}
+                  onClick={() => { setAddQty(n); setRemoveQty(n); }}
+                  className={`font-orbitron text-[9px] px-2 py-0.5 rounded border transition-all ${
+                    addQty === n
+                      ? "border-[#AAFF00] text-[#AAFF00] bg-[#AAFF0015]"
+                      : "border-[#333] text-[#444] hover:border-[#AAFF0044]"
+                  }`}
+                >
+                  {n}
+                </button>
+              ))}
+            </div>
+
+            {/* Add row */}
+            <div className="flex items-center gap-2 mb-2">
+              <span className="font-ibm-thai text-[10px] text-[#555] flex-1">➕ เพิ่มอีก</span>
+              <input
+                type="number"
+                value={addQty}
+                min={1}
+                onChange={e => setAddQty(Math.max(1, parseInt(e.target.value) || 1))}
+                className="font-orbitron text-center text-[#AAFF00] bg-[#0A0A0A] border border-[#AAFF0033] rounded w-12 py-0.5 text-xs focus:border-[#AAFF00] focus:outline-none"
+              />
+              <button
+                onClick={() => {
+                  setCurrentFrameCount(prev => prev + addQty);
+                  setTotalAdded(prev => prev + addQty);
+                }}
+                className="font-orbitron text-[9px] border border-[#AAFF0055] text-[#AAFF00] px-2 py-1 rounded-lg hover:bg-[#AAFF0015] transition-all"
+              >
+                + ADD
+              </button>
+            </div>
+
+            {/* Remove row */}
+            <div className="flex items-center gap-2 mb-2">
+              <span className="font-ibm-thai text-[10px] text-[#555] flex-1">➖ นำออก</span>
+              <input
+                type="number"
+                value={removeQty}
+                min={1}
+                onChange={e => setRemoveQty(Math.max(1, parseInt(e.target.value) || 1))}
+                className="font-orbitron text-center text-[#FF333399] bg-[#0A0A0A] border border-[#FF333333] rounded w-12 py-0.5 text-xs focus:border-[#FF3333] focus:outline-none"
+              />
+              <button
+                onClick={() => {
+                  setCurrentFrameCount(prev => {
+                    const actualRemoved = Math.min(prev, removeQty);
+                    setTotalRemoved(t => t + actualRemoved);
+                    return prev - actualRemoved;
+                  });
+                }}
+                className="font-orbitron text-[9px] border border-[#FF333355] text-[#FF3333] px-2 py-1 rounded-lg hover:bg-[#FF333310] transition-all"
+              >
+                − REMOVE
+              </button>
+            </div>
+
+            {/* Adjusted summary */}
+            {(totalAdded > 0 || totalRemoved > 0) && (
+              <div className="font-orbitron text-[9px] text-[#333] mt-1">
+                Adjusted: <span className="text-[#AAFF00]">+{totalAdded}</span> / <span className="text-[#FF3333]">−{totalRemoved}</span>
               </div>
+            )}
+          </div>
+
+          {/* STATUS CARD */}
+          <div className="bg-[#111] border border-[#AAFF0015] rounded-2xl p-3">
+            <div className="font-orbitron text-[9px] text-[#333] tracking-widest mb-2">STATUS</div>
+            <div className="flex items-center gap-2">
+              <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: current.color, boxShadow: status === "counting" ? `0 0 8px ${current.color}` : "none" }} />
+              <span className="font-orbitron text-xs" style={{ color: current.color }}>{current.label}</span>
+            </div>
+            <div className="font-ibm-thai text-[10px] text-[#444] mt-1">{current.labelTh}</div>
+          </div>
+
+          {/* SESSION CARD */}
+          <div className="bg-[#111] border border-[#AAFF0015] rounded-2xl p-3">
+            <div className="font-orbitron text-[9px] text-[#333] tracking-widest mb-2">SESSION</div>
+            <div className="grid grid-cols-2 gap-1">
+              <span className="font-orbitron text-[9px] text-[#333]">TIME</span>
+              <span className="font-orbitron text-[9px] text-[#AAFF00] text-right">{formatTime(sessionTime)}</span>
+              <span className="font-orbitron text-[9px] text-[#333]">TOTAL</span>
+              <span className="font-orbitron text-[9px] text-white text-right">{totalCount.toLocaleString()}</span>
+              <span className="font-orbitron text-[9px] text-[#333]">MODE</span>
+              <span className="font-orbitron text-[9px] text-right" style={{ color: demoMode ? "#FFAA00" : "#AAFF00" }}>
+                {demoMode ? "DEMO" : "LIVE"}
+              </span>
             </div>
           </div>
+
+          {/* DETECTION LOG (landscape only) */}
+          <div className="bg-[#111] border border-[#AAFF0015] rounded-2xl p-3 hidden landscape:flex flex-col flex-1 min-h-0">
+            <div className="font-orbitron text-[9px] text-[#333] tracking-widest mb-2">DETECTION LOG</div>
+            <div className="space-y-1 overflow-y-auto flex-1">
+              {log.length === 0 ? (
+                <div className="font-orbitron text-[9px] text-[#222]">— no detections yet —</div>
+              ) : (
+                log.slice(0, 10).map((entry, i) => (
+                  <div key={`${entry.time}-${i}`} className={`flex justify-between font-orbitron text-[9px] ${i === 0 ? "text-[#AAFF00]" : "text-[#333]"}`}>
+                    <span>{entry.time}</span>
+                    <span>+{entry.frameCount}</span>
+                    <span className={i === 0 ? "text-white" : ""}>{entry.total.toLocaleString()}</span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
